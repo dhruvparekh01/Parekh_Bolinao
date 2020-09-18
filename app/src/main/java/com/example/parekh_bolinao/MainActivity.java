@@ -1,9 +1,6 @@
 package com.example.parekh_bolinao;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -33,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(R.style.AppTheme);
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
 
@@ -72,7 +68,9 @@ public class MainActivity extends AppCompatActivity {
                         Record record = recordSnapshot.getValue(Record.class);
                         records.add(record);
 
-                        if (firstSummary && record.getMonth() == calendar.get(Calendar.MONTH)) {
+                        int currentMonth = calendar.get(Calendar.MONTH);
+                        assert record != null;
+                        if (firstSummary && record.getMonth() == currentMonth) {
                             s = new Summary(record.getName(),
                                     record.getSystolic_reading(),
                                     record.getDiastolic_reading(),
@@ -80,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                                     record.getParent_id());
                             summaries.add(s);
                             firstSummary = false;
-                        } else if (record.getMonth() == calendar.get(Calendar.MONTH)) {
+                        } else if (record.getMonth() == currentMonth) {
                             if (s != null) {
                                 int count = s.getRecordCount();
                                 double syst_new = (s.getSyst() * count + record.getSystolic_reading()) / (count + 1);
@@ -106,32 +104,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-//    private void addToSummaries(Record record) {
-//        boolean found = false;
-//        String name = record.getName();
-//        double syst = record.getSystolic_reading();
-//        double dia = record.getDiastolic_reading();
-//
-//        for(Summary s: summaries) {
-//            if (s.getName().equalsIgnoreCase(name)) {
-//                found = true;
-//                int count = s.getRecordCount();
-//                syst = s.getSyst();
-//                double syst_new = (syst * count + record.getSystolic_reading()) / (count + 1);
-//
-//                dia = s.getDia();
-//                double dia_new = (dia * count + record.getDiastolic_reading()) / (count + 1);
-//
-//                s.setRecordCount(++count);
-//                s.setDia(dia_new);
-//                s.setSyst(syst_new);
-//            }
-//        }
-//        if (!found) {
-//            summaries.add(new Summary(name, syst, dia, 1));
-//        }
-//    }
 
     public DatabaseReference getDb() {
         return db;

@@ -102,6 +102,7 @@ public class HomeFragment extends Fragment {
         if (recordList.size() == 0) {
             Log.e("Action", "force filling array.");
             forceFill();
+            mDatabase.removeEventListener(dataChangeListener);
         } else {
             recordList = ((MainActivity)getActivity()).records;
             adapter = new RecordUsersAdapter(getActivity(), recordList);
@@ -122,7 +123,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void forceFill() {
-        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+        dataChangeListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 recordList = new ArrayList<>();
@@ -141,7 +142,8 @@ public class HomeFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Toast.makeText(getActivity(), "Unable to add record!", Toast.LENGTH_LONG).show();
             }
-        });
+        };
+        mDatabase.addListenerForSingleValueEvent(dataChangeListener);
     }
 
     public void addToDatabase(DatabaseReference mDatabase, String user_name, String id, String parent_id) {
